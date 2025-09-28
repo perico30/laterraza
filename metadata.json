@@ -1,0 +1,7 @@
+{
+  "name": "EventHive - Digital Tickets",
+  "description": "A modern platform for selling digital tickets for events. Features an admin panel for event management and a user-friendly interface for purchasing tickets with interactive seat maps.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
