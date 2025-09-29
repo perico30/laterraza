@@ -42,7 +42,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 const DEFAULT_SETTINGS: AppSettings = {
     logoUrl: null,
-    primaryColor: '#7c3aed',
+    primaryColor: '#f59e0b',
     backgroundColor: '#111827',
     footerText: `© ${new Date().getFullYear()} EventHive. Todos los derechos reservados.`,
     socialLinks: [],
