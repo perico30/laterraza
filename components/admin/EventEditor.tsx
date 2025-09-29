@@ -1,7 +1,8 @@
 import React, { useState, useRef, MouseEvent, useMemo, useCallback, useEffect } from 'react';
 import { useAppContext } from '../../context/AppContext';
 import { Event, TicketType, ShapeStatus, VenueShape, ShapeType, RectShape, CircleShape, PolygonShape, BookingConditionMinTickets, BookingConditionCombo } from '../../types';
-import { uploadFile } from '../../firebase/config';
+import { uploadFile, db } from '../../firebase/config';
+import { doc, collection } from 'firebase/firestore';
 
 interface EventEditorProps {
   event: Event | null;
@@ -23,9 +24,13 @@ type DragState = {
 
 const EventEditor: React.FC<EventEditorProps> = ({ event, onClose }) => {
   const { addEvent, updateEvent } = useAppContext();
+  
+  // Generate a stable ID for new events upfront to ensure uploads are associated correctly.
+  const [eventId] = useState(() => event?.id || doc(collection(db, 'events')).id);
+
   const [formData, setFormData] = useState<Event>(
     event || {
-      id: `event-${Date.now()}`,
+      id: eventId,
       name: '', date: '', time: '', description: '', mainImage: '',
       carouselImages: [],
       ticketTypes: [{ id: `ticket-${Date.now()}`, name: '', price: 0, fee: 0, discount: 0, courtesy: false, color: COLOR_PALETTE[0] }],
@@ -181,8 +186,8 @@ const EventEditor: React.FC<EventEditorProps> = ({ event, onClose }) => {
   const handleFileUpload = async (file: File, field: keyof Event | `ticketDesign.${'headerImageUrl' | 'brandLogoUrl'}`) => {
       setIsUploading(true);
       try {
-          const eventId = event?.id || formData.id;
-          const filePath = `events/${eventId}/${field.replace('.', '_')}-${Date.now()}-${file.name}`;
+          const currentEventId = formData.id; // Use the stable ID from state
+          const filePath = `events/${currentEventId}/${field.replace('.', '_')}-${Date.now()}-${file.name}`;
           const downloadURL = await uploadFile(file, filePath);
           
           if (field.startsWith('ticketDesign.')) {
@@ -210,12 +215,8 @@ const EventEditor: React.FC<EventEditorProps> = ({ event, onClose }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (event) {
-      await updateEvent(formData);
-    } else {
-      const { id, ...newEventData } = formData;
-      await addEvent(newEventData);
-    }
+    // With the stable ID and upsert logic in updateEvent, we can use it for both creating and editing.
+    await updateEvent(formData);
     onClose();
   };
   
@@ -583,7 +584,7 @@ const SquareTablePresetIcon = () => (
     </svg>
 );
 const CogIcon = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12a7.5 7.5 0 0 0 15 0m-15 0a7.5 7.5 0 1 1 15 0m-15 0H3m18 0h-1.5m-15 0a7.5 7.5 0 1 1 15 0m-15 0H3m18 0h-1.5m-15 0a7.5 7.5 0 1 1 15 0m-15 0H3m18 0h-1.5m-15 0a7.5 7.5 0 1 1 15 0m-15 0H3m18 0h-1.5m-15 0a7.5 7.5 0 1 1 15 0m-15 0H3m18 0h-1.5m-15 0a7.5 7.5 0 1 1 15 0m-15 0H3m18 0h-1.5m-15 0a7.5 7.5 0 1 1 15 0m-15 0H3m18 0h-1.5m-15 0a7.5 7.5 0 1 1 15 0m-15 0H3m18 0h-1.5" /><path strokeLinecap="round" strokeLinejoin="round" d="M12 9.75v4.5m-4.5-2.25h9" /></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12a7.5 7.5 0 0 0 15 0m-15 0a7.5 7.5 0 1 1 15 0m-15 0H3m18 0h-1.5m-15 0a7.5 7.5 0 1 1 15 0m-15 0H3m18 0h-1.5m-15 0a7.5 7.5 0 1 1 15 0m-15 0H3m18 0h-1.5m-15 0a7.5 7.5 0 1 1 15 0m-15 0H3m18 0h-1.5m-15 0a7.5 7.5 0 1 1 15 0m-15 0H3m18 0h-1.5m-15 0a7.5 7.5 0 1 1 15 0m-15 0H3m18 0h-1.5m-15 0a7.5 7.5 0 1 1 15 0m-15 0H3m18 0h-1.5m-15 0a7.5 7.5 0 1 1 15 0m-15 0H3m18 0h-1.5m-15 0a7.5 7.5 0 1 1 15 0m-15 0H3m18 0h-1.5" /><path strokeLinecap="round" strokeLinejoin="round" d="M12 9.75v4.5m-4.5-2.25h9" /></svg>
 );
 const TrashIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>

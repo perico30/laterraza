@@ -136,7 +136,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const updateEvent = async (updatedEvent: Event) => {
     const { id, ...eventData } = updatedEvent;
     const eventRef = doc(db, 'events', id);
-    await updateDoc(eventRef, eventData);
+    // Use setDoc with merge to handle both creation (with a known ID) and updates.
+    await setDoc(eventRef, eventData, { merge: true });
   };
 
   const deleteEvent = async (eventId: string) => {
