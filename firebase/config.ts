@@ -3,7 +3,16 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
-// Your web app's Firebase configuration
+// --- [IMPORTANTE] LEER ANTES DE USAR EN PRODUCCIÓN ---
+// Las credenciales de Firebase se han añadido directamente en este archivo
+// para facilitar el desarrollo y las pruebas.
+// 
+// ¡ADVERTENCIA DE SEGURIDAD!
+// NUNCA debes subir este archivo con las credenciales visibles a un repositorio
+// público (como GitHub). Exponer estas claves puede comprometer tu proyecto de Firebase.
+//
+// Para producción (como en Vercel), DEBES usar Variables de Entorno, como se
+// explicó anteriormente. Este método es solo para que puedas trabajar localmente.
 const firebaseConfig = {
   apiKey: "AIzaSyAB5OM2zQiUYwM8k2Wl_MdPrrm8_mgjAL4",
   authDomain: "laterraza-64c60.firebaseapp.com",
