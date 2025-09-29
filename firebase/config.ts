@@ -3,15 +3,15 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
-// TODO: Replace the following with your app's Firebase project configuration
-// For more information on how to get this, visit: https://firebase.google.com/docs/web/setup#available-libraries
+// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyAB5OM2zQiUYwM8k2Wl_MdPrrm8_mgjAL4",
+  authDomain: "laterraza-64c60.firebaseapp.com",
+  projectId: "laterraza-64c60",
+  storageBucket: "laterraza-64c60.appspot.com",
+  messagingSenderId: "696269543807",
+  appId: "1:696269543807:web:8c780f33d649cee3ade24a",
+  measurementId: "G-ZPGZGYFJN2"
 };
 
 // Initialize Firebase
