@@ -24,9 +24,25 @@ const Settings = () => {
         const filePath = `settings/${field}/${Date.now()}-${file.name}`;
         const downloadURL = await uploadFile(file, filePath);
         setLocalSettings(prev => ({...prev, [field]: downloadURL}));
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error uploading file:", error);
-        alert("Error al subir el archivo.");
+        let errorMessage = "Error al subir el archivo. Inténtalo de nuevo.";
+        if (error.code) {
+          switch (error.code) {
+            case 'storage/unauthorized':
+              errorMessage = "Error: No tienes permiso para subir archivos. Revisa que hayas iniciado sesión y que las reglas de seguridad de Firebase Storage sean correctas.";
+              break;
+            case 'storage/canceled':
+              errorMessage = "La subida del archivo fue cancelada.";
+              break;
+            case 'storage/unknown':
+              errorMessage = "Ocurrió un error desconocido. Esto puede deberse a un problema de CORS. Asegúrate de que el dominio de tu aplicación Vercel esté permitido en la configuración de CORS de tu bucket de Firebase Storage.";
+              break;
+            default:
+              errorMessage = `Error al subir el archivo: ${error.message} (código: ${error.code})`;
+          }
+        }
+        alert(errorMessage);
     } finally {
         setIsUploading(false);
     }
@@ -74,9 +90,25 @@ const Settings = () => {
                     link.id === id ? { ...link, iconUrl: downloadURL } : link
                 )
             }));
-        } catch (error) {
+        } catch (error: any) {
              console.error("Error uploading social icon:", error);
-             alert("Error al subir el icono.");
+             let errorMessage = "Error al subir el icono. Inténtalo de nuevo.";
+             if (error.code) {
+               switch (error.code) {
+                 case 'storage/unauthorized':
+                   errorMessage = "Error: No tienes permiso para subir archivos. Revisa que hayas iniciado sesión y que las reglas de seguridad de Firebase Storage sean correctas.";
+                   break;
+                 case 'storage/canceled':
+                   errorMessage = "La subida del archivo fue cancelada.";
+                   break;
+                 case 'storage/unknown':
+                   errorMessage = "Ocurrió un error desconocido. Esto puede deberse a un problema de CORS. Asegúrate de que el dominio de tu aplicación Vercel esté permitido en la configuración de CORS de tu bucket de Firebase Storage.";
+                   break;
+                 default:
+                   errorMessage = `Error al subir el archivo: ${error.message} (código: ${error.code})`;
+               }
+             }
+             alert(errorMessage);
         } finally {
             setIsUploading(false);
         }
